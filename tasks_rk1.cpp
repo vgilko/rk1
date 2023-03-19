@@ -365,30 +365,30 @@ float StudentInfo::getAverMark(const string &subjName) {
     author		:
     date		:
 */
-//void StudentInfo::printInfoStudent() {
-//    stringstream sstream;
-//
-//    sstream << '[' << info.at(0) << "] [" << info.at(1) << "] : " << info.at(2) << "\n";
-//
-//    for (auto &iter = subjMark.begin(); iter != subjMark.end(); ++iter) {
-//        sstream << "\t" << iter->first << " : ";
-//
-//        list<int> &marks = iter->second.first;
-//        for (auto &marksIter = marks.begin(); marks.end(); ++marksIter) {
-//            sstream << *marksIter;
-//
-//            if (marksIter + 1 != marks.end()) {
-//                sstream << ", "
-//            } else {
-//                sstream << " -- "
-//            }
-//        }
-//
-//        sstream << iter->second.second << endl;
-//    }
-//
-//    cout << sstream.str();
-//}
+void StudentInfo::printInfoStudent() {
+    stringstream sstream;
+
+    sstream << '[' << get<0>(info) << "] [" << get<1>(info) << "] : " << get<2>(info) << "\n";
+
+    for (auto iter = subjMark.begin(); iter != subjMark.end(); ++iter) {
+        sstream << "\t" << iter->first << " : ";
+
+        list<int> &marks = iter->second.first;
+        for (auto marksIter = marks.begin(); marksIter != marks.end(); ++marksIter) {
+            sstream << *marksIter;
+
+            if (next(marksIter) != marks.end()) {
+                sstream << ", ";
+            } else {
+                sstream << " -- ";
+            }
+        }
+
+        sstream << iter->second.second << endl;
+    }
+
+    cout << sstream.str();
+}
 
 /*	desription	:	запись данных в файл формат файла
                         [Фамилия] [имя] : [номер билета]
@@ -399,6 +399,6 @@ float StudentInfo::getAverMark(const string &subjName) {
     author		:
     date		:
 */
-void StudentInfo::writeAllInfoToFile();
+//void StudentInfo::writeAllInfoToFile();
 
 
