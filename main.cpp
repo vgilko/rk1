@@ -10,9 +10,17 @@ void task_1() {
 }
 
 void task_2() {
-    char *binary = convertDecToBin(99999999);
+    char *binary = convertDecToBin(-454432);
 
     writeToFile("result_task2", binary);
+}
+
+void task_3() {
+    char *binary = convertDecToBin(123421321);
+
+    char *toHex = convertBinToHex(binary);
+
+    writeToFile("binToHex.txt", 0, toHex, binary);
 }
 
 void task_4() {
@@ -87,5 +95,5 @@ void task_8() {
 }
 
 int main() {
-    task_8();
+    task_2();
 }

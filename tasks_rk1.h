@@ -3,10 +3,7 @@
 #include <string>
 #include <list>
 
-using std::map;
-using std::vector;
-using std::string;
-using std::list;
+using namespace std;
 
 
 class WorkWithFile {
@@ -30,6 +27,10 @@ public :
 };
 
 char *convertDecToBin(int number);
+
+char *convertBinToHex(const char *binNum);
+
+void writeToFile(const char* fileName, int writeAppend, const char* hexNum, const char* binNum);
 
 void writeToFile(const char *fileName, const char *strNum);
 
@@ -73,6 +74,7 @@ private :
     std::map<string/*название предмета*/, std::pair<std::list<int> /*список оценок*/, float /*средняя оценка*/>> subjMark;
 
     string buildMessageString();
+
 public :
     StudentInfo(string fullName, string name, char *studentId) {
         info = {fullName, name, studentId};

@@ -80,34 +80,34 @@ void WorkWithFile::writeStatInfoToFile(const char *outFile) {
     }
 }
 
-#include <iostream>
-#include <string>
-#include <algorithm>
-
 char *convertDecToBin(int number) {
-    bool isNegative = false;
+    bool isNegative = false; // флаг для отрицательных чисел
     if (number < 0) {
         isNegative = true;
         number = -number;
-    } else if (number == 0) {
+    } else if (number == 0) { // отдельно обрабатываем случай, когда входное значение равно нулю
+        // просто создаем массив и помещаем в него 0. длина массива 2, т.к. в строке помимо нуля должен быть и нуль-терминал "\0"
         char *res = new char[2];
         res[0] = '0';
         return res;
     }
 
-    int binaryArray[32];
+    int binaryArray[32]; // массив для хранения двоичной записи числа
     int i = 0;
 
+    // перевод числа в двоичную систему
     while (number > 0) {
-        binaryArray[i] = number % 2;
+        binaryArray[i] = number % 2; //записываем в соответствующую позицию остаток от деления на 2
         number /= 2;
         i++;
     }
 
-    if (isNegative) {
+    if (isNegative) { // если исходное число меньше нуля
         for (int j = 0; j < i; j++) {
-            binaryArray[j] = !binaryArray[j];
+            binaryArray[j] = !binaryArray[j]; // инвертируем биты 0 => 1, 1 => 0
         }
+
+        // получаем двоичное представление отрицательного числа
         int carry = 1;
         int k = 0;
         while (carry && k < 32) {
@@ -118,6 +118,7 @@ char *convertDecToBin(int number) {
         }
     }
 
+    // записываем биты в обратном порядке
     char *reversedBinaryArray = new char[32];
     int indexReversedArray = 0;
     for (int j = i - 1; j >= 0; j--) {
@@ -128,6 +129,59 @@ char *convertDecToBin(int number) {
     return reversedBinaryArray;
 }
 
+char *convertBinToHex(const char *binNum) {
+    string binary = string(binNum);
+
+    int len = binary.length();
+    string hex;
+    int i = 0;
+
+    // Если длина бинарного числа не кратна 4, дополняем его слева нулями до кратности 4.
+    if (len % 4 != 0) {
+        while (i < (4 - len % 4)) {
+            binary = "0" + binary;
+            i++;
+        }
+    }
+
+    len = binary.length();
+    i = 0;
+
+    // Проходим по бинарному числу по 4 символа и конвертируем их в шестнадцатеричное представление.
+    while (i < len) {
+        string nibble = binary.substr(i,
+                                      4); // берем подстроку 4 символа, максимальное значение 1111 в двоичной, что равняется 15 в десятичной
+        int decimal = stoi(nibble, nullptr, 2); // конвертируем из двоичного числа в десятичное
+
+        if (decimal <= 9) {
+            hex += to_string(decimal);
+        } else {
+            hex += (char) (decimal - 10 +
+                           'A'); // если число двузначное, то вычисляем его смещение относительно символа А.
+            // в ascii символы расположены последовательно, что позволяет производить оперции с числовыми кодами символов
+        }
+
+        i += 4; // 4 т.к. взяли подстроку размера 4
+    }
+
+    char *result = new char[hex.size()]; // копируем в си строку, потому что string.c_str() возвращает константную строку,
+    // что не подходит под тип возвращаемого значения функции
+    for (int i = 0; i < hex.size(); ++i) {
+        result[i] = hex[i];
+    }
+
+    return result;
+}
+
+void writeToFile(const char *fileName, int writeAppend, const char *hexNum, const char *binNum) {
+    ofstream out_file(fileName); // открываем файловый поток на запись
+
+    if (out_file) {
+        out_file << binNum << "\t" << hexNum << endl;
+
+        out_file.close();
+    }
+}
 
 // Функция записи строки в файл
 void writeToFile(const char *fileName, const char *strNum) {
@@ -183,8 +237,8 @@ void randFill(float **arr, int colCount, int rowCount) {
         return; // return пустой, потому что функция имеет тип возвращаемого параметра - void
     }
 
-    if (arr ==
-        nullptr) { // обрабатываем случай, когда под массив не была выделена память. Как альтернатива - самим выделить память
+    // обрабатываем случай, когда под массив не была выделена память. Как альтернатива - самим выделить память
+    if (arr == nullptr) {
         cout << "Invalid array" << endl;
         return; // return пустой, потому что функция имеет тип возвращаемого параметра - void
     }
@@ -310,11 +364,12 @@ void LinkedList::insert(int nameNode, int position) {
     date		:
 */
 int StudentInfo::addMark(const string &subjName, int mark) {
-    if (subjMark.find(subjName) != subjMark.end()) {
-        pair<list<int>, float> &pair = subjMark.at(subjName);
+    if (subjMark.find(subjName) != subjMark.end()) { // если такой предмет существует
+        pair<list<int>, float> &pair = subjMark.at(subjName); // получаем ссылку на пару "список оценок" - "средняя оценка"
 
-        pair.first.push_back(mark);
+        pair.first.push_back(mark); // добавляем новую оценку в список оценок
 
+        // пересчёт оценок
         int sum = 0;
         for (auto &val: pair.first) {
             sum += val;
@@ -336,8 +391,8 @@ int StudentInfo::addMark(const string &subjName, int mark) {
 
 */
 int StudentInfo::addSubj(const string &subjName) {
-    if (subjMark.find(subjName) == subjMark.end()) {
-        subjMark.insert({subjName, {{}, 0}});
+    if (subjMark.find(subjName) == subjMark.end()) { // если такого предмета НЕТ
+        subjMark.insert({subjName, {{}, 0}}); // создаем пару "название предмета" - "пара "пустой список оценок" - "средняя оценка""
 
         return 1;
     }
@@ -352,36 +407,37 @@ int StudentInfo::addSubj(const string &subjName) {
     date		:
 */
 float StudentInfo::getAverMark(const string &subjName) {
-    if (subjMark.find(subjName) != subjMark.end()) {
-        return subjMark.at(subjName).second;
+    if (subjMark.find(subjName) != subjMark.end()) { // если нашли такой предмет
+        return subjMark.at(subjName).second; // возвращаем среднее значение оценок
     }
 
     return 0;
 }
 
-string StudentInfo::buildMessageString() {
-    stringstream sstream;
+string StudentInfo::buildMessageString() { // отдельная функция, чтобы переиспользовать и в printInfoStudent и в writeAllInfoToFile
+    // формирует сообщение по нашему шаблону
+    stringstream sstream; // поток для составления строки
 
-    sstream << '[' << get<0>(info) << "] [" << get<1>(info) << "] : " << get<2>(info) << "\n";
+    sstream << '[' << get<0>(info) << "] [" << get<1>(info) << "] : " << get<2>(info) << "\n"; // получаем значения из тапла (фамилия, имя, зачётка)
 
-    for (auto iter = subjMark.begin(); iter != subjMark.end(); ++iter) {
-        sstream << "\t" << iter->first << " : ";
+    for (auto iter = subjMark.begin(); iter != subjMark.end(); ++iter) { // итерируемся по словарю
+        sstream << "\t" << iter->first << " : "; // название предмета является ключом в словаре
 
-        list<int> &marks = iter->second.first;
-        for (auto marksIter = marks.begin(); marksIter != marks.end(); ++marksIter) {
+        list<int> &marks = iter->second.first; // создаем переменную - ссылку на список оценок, для удобства
+        for (auto marksIter = marks.begin(); marksIter != marks.end(); ++marksIter) { // пробегаемся по списку оценок
             sstream << *marksIter;
 
-            if (next(marksIter) != marks.end()) {
+            if (next(marksIter) != marks.end()) { // условие, чтобы после последней оценки не было запятой
                 sstream << ", ";
             } else {
-                sstream << " -- ";
+                sstream << " -- "; // условие, чтобы после последней оценки поставить разделительные символы "--" (как в задании)
             }
         }
 
-        sstream << iter->second.second << endl;
+        sstream << iter->second.second << endl; // записываем среднюю оценку по предмету и перевод на новую строку
     }
 
-    return sstream.str();
+    return sstream.str(); // возвращаем строку
 }
 
 /*	desription	:	вычисления средней оценки по предметам
@@ -409,6 +465,8 @@ void StudentInfo::writeAllInfoToFile() {
 
     if (out_file) {
         out_file << buildMessageString();
+
+        out_file.close();
     }
 }
 
