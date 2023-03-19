@@ -10,7 +10,7 @@ void task_1() {
 }
 
 void task_2() {
-    char* binary = convertDecToBin(99999999);
+    char *binary = convertDecToBin(99999999);
 
     writeToFile("result_task2", binary);
 }
@@ -39,7 +39,7 @@ void task_5() {
 
     auto result = averStr2DArray(arr, columnAmount, rowAmount);
 
-    for (auto& value : result) {
+    for (auto &value: result) {
         cout << value.first << " = " << value.second << endl;
     }
 }
@@ -65,6 +65,27 @@ void task_7() {
     list.writeToFileFromTail();
 }
 
+void task_8() {
+    char id[] = "23421d";
+    StudentInfo info = StudentInfo("FullName", "Name", id);
+
+    cout << info.addSubj("Russian") << endl;
+    cout << info.addSubj("Russian") << endl;
+    cout << info.addMark("Russian", 4) << endl;
+    cout << info.addMark("Russian", 3) << endl;
+    cout << info.addMark("Russian", 4) << endl;
+
+    cout << info.addSubj("Math") << endl;
+    cout << info.addMark("Math", 5) << endl;
+
+    cout << info.getAverMark("Russian") << endl;
+    cout << info.getAverMark("Math") << endl;
+    cout << info.getAverMark("Uknown") << endl;
+
+    info.printInfoStudent();
+    info.writeAllInfoToFile();
+}
+
 int main() {
-    task_2();
+    task_8();
 }

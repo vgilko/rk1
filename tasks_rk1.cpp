@@ -336,7 +336,7 @@ int StudentInfo::addMark(const string &subjName, int mark) {
 
 */
 int StudentInfo::addSubj(const string &subjName) {
-    if (subjMark.find(subjName) != subjMark.end()) {
+    if (subjMark.find(subjName) == subjMark.end()) {
         subjMark.insert({subjName, {{}, 0}});
 
         return 1;
@@ -359,13 +359,7 @@ float StudentInfo::getAverMark(const string &subjName) {
     return 0;
 }
 
-/*	desription	:	вычисления средней оценки по предметам
-    input		:	subjName - название предмета
-    output		:	среднее значение оценки
-    author		:
-    date		:
-*/
-void StudentInfo::printInfoStudent() {
+string StudentInfo::buildMessageString() {
     stringstream sstream;
 
     sstream << '[' << get<0>(info) << "] [" << get<1>(info) << "] : " << get<2>(info) << "\n";
@@ -387,8 +381,19 @@ void StudentInfo::printInfoStudent() {
         sstream << iter->second.second << endl;
     }
 
-    cout << sstream.str();
+    return sstream.str();
 }
+
+/*	desription	:	вычисления средней оценки по предметам
+    input		:	subjName - название предмета
+    output		:	среднее значение оценки
+    author		:
+    date		:
+*/
+void StudentInfo::printInfoStudent() {
+    cout << buildMessageString();
+}
+
 
 /*	desription	:	запись данных в файл формат файла
                         [Фамилия] [имя] : [номер билета]
@@ -399,6 +404,12 @@ void StudentInfo::printInfoStudent() {
     author		:
     date		:
 */
-//void StudentInfo::writeAllInfoToFile();
+void StudentInfo::writeAllInfoToFile() {
+    ofstream out_file("student_data.txt");
+
+    if (out_file) {
+        out_file << buildMessageString();
+    }
+}
 
 
